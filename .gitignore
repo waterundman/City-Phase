@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.zip
+*.docx
+*.blend
+*.blend1
+*.glb
+*.gltf
+*.fbx
+*.obj
+*.usd
+*.usda
+*.usdc
+.osm_cache/
+data/osm_cache/

@@ -1,0 +1,114 @@
+{
+  "typologies": {
+    "tower": {
+      "name": "塔楼",
+      "name_en": "Tower",
+      "floors_range": [25, 60],
+      "coverage_range": [0.25, 0.40],
+      "description": "细长高层，底层架空或小商业，常见于浦东、新宿副都心",
+      "generator": "stepped_tower",
+      "params": {
+        "sections_range": [3, 6],
+        "setback_ratio_range": [0.75, 0.90],
+        "twist_deg_range": [-8, 8],
+        "base_w_range": [15, 30],
+        "base_d_range": [12, 25]
+      }
+    },
+    "podium": {
+      "name": "裙房+塔楼",
+      "name_en": "Podium + Tower",
+      "podium_floors_range": [3, 6],
+      "tower_floors_range": [20, 50],
+      "coverage_range": [0.60, 0.80],
+      "description": "商业裙楼托举住宅/办公塔，上海内环CBD标志形态",
+      "generator": "podium_tower",
+      "params": {
+        "podium_height_range": [12, 24],
+        "tower_ratio_range": [0.35, 0.55],
+        "setback_ratio_range": [0.75, 0.85],
+        "twist_deg_range": [-5, 5]
+      }
+    },
+    "slab": {
+      "name": "板楼",
+      "name_en": "Slab Block",
+      "floors_range": [6, 18],
+      "coverage_range": [0.30, 0.50],
+      "description": "长条形板式住宅，东西向排列，1980-2000年代主力建筑类型",
+      "generator": "slab",
+      "params": {
+        "width_ratio_range": [1.3, 2.0],
+        "depth_ratio_range": [0.3, 0.6],
+        "floor_height": 3.0
+      }
+    },
+    "old_res": {
+      "name": "老式居民楼",
+      "name_en": "Old Residential",
+      "floors_range": [4, 7],
+      "coverage_range": [0.70, 0.85],
+      "description": "小尺度密集排布，旧城改造区，上海内环弄堂肌理背景体",
+      "generator": "old_res",
+      "params": {
+        "width_ratio_range": [0.6, 1.0],
+        "depth_ratio_range": [0.6, 1.0],
+        "floor_height": 2.8,
+        "roof_inset": 0.3,
+        "roof_depth": -0.3
+      }
+    },
+    "complex": {
+      "name": "综合体",
+      "name_en": "Mixed-Use Complex",
+      "base_floors_range": [5, 10],
+      "coverage_range": [0.80, 0.95],
+      "description": "大底盘商业综合体，不规则平面，常含中庭、天桥连接",
+      "generator": "complex",
+      "params": {
+        "base_height_range": [15, 30],
+        "tower_count_range": [2, 4],
+        "tower_height_range": [30, 80],
+        "tower_size_range": [6, 15]
+      }
+    },
+    "industrial": {
+      "name": "工业厂房",
+      "name_en": "Industrial",
+      "floors_range": [1, 3],
+      "coverage_range": [0.60, 0.75],
+      "description": "大跨度低层，锯齿屋顶，城市边缘/园区，正在大量被改造为创意园区",
+      "generator": "industrial",
+      "params": {
+        "width_ratio_range": [1.5, 2.5],
+        "depth_ratio_range": [1.0, 1.5],
+        "height_multiplier_range": [0.3, 0.5],
+        "tooth_width_range": [6, 12]
+      }
+    }
+  },
+  "osm_type_mapping": {
+    "apartments": ["tower", "slab"],
+    "residential": ["tower", "old_res"],
+    "commercial": ["complex", "podium"],
+    "retail": ["complex"],
+    "office": ["tower", "podium"],
+    "industrial": ["industrial"],
+    "warehouse": ["industrial"],
+    "house": ["old_res"]
+  },
+  "height_inference": {
+    "default_floor_height": 3.0,
+    "fallback_heights": {
+      "residential": 20.0,
+      "apartments": 30.0,
+      "commercial": 25.0,
+      "office": 40.0,
+      "retail": 10.0,
+      "industrial": 8.0,
+      "warehouse": 6.0,
+      "house": 8.0,
+      "garage": 3.0
+    }
+  }
+}
