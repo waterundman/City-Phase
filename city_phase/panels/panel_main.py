@@ -60,6 +60,7 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
     def _draw_city(self, layout, props):
         box = layout.box()
         box.label(text="City Layout", icon="GRID")
+        box.prop(props, "road_mode")
         box.prop(props, "city_radius")
         box.prop(props, "main_grid_spacing")
         box.prop(props, "sub_grid_spacing")

@@ -62,12 +62,13 @@ class CITYP_OT_Generate(bpy.types.Operator):
         seed = props.seed
 
         self.report({"INFO"}, "Generating road graph...")
-        graph = city_layout.generate_procedural_road_graph(
+        graph = city_layout.generate_road_graph(
             radius=props.city_radius,
             main_spacing=props.main_grid_spacing,
             sub_spacing=props.sub_grid_spacing,
             perturbation_pct=props.perturbation_pct,
             seed=seed,
+            road_mode=props.road_mode,
         )
         self.report({"INFO"}, f"Road graph: {graph.node_count()} nodes, {len(graph.edges)} edges")
 
@@ -102,7 +103,7 @@ class CITYP_OT_Generate(bpy.types.Operator):
             seed=seed,
         )
 
-        road_edges = [(graph.nodes[a], graph.nodes[b]) for a, b in graph.edges]
+        road_edges = graph.get_edges_with_width()
 
         building_col, road_col = batch_buildings.batch_place_buildings(
             building_specs,

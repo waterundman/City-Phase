@@ -134,7 +134,7 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None, r
         building_col.objects.link(obj)
 
     if road_edges:
-        _generate_road_mesh(road_edges, road_col, road_width=road_width)
+        _generate_road_mesh(road_edges, road_col, default_width=road_width)
 
     return building_col, road_col
 
@@ -151,11 +151,18 @@ def _ensure_collection(name, context):
     return col
 
 
-def _generate_road_mesh(road_edges, road_col, road_width=8.0):
+def _generate_road_mesh(road_edges, road_col, default_width=8.0):
     mesh = bpy.data.meshes.new("CityP_City_Roads")
     bm = bmesh.new()
 
-    for a, b in road_edges:
+    for edge in road_edges:
+        if len(edge) == 3:
+            a, b, width = edge
+            width = width if width else default_width
+        else:
+            a, b = edge
+            width = default_width
+
         ax, ay = a
         bx, by = b
 
@@ -165,8 +172,8 @@ def _generate_road_mesh(road_edges, road_col, road_width=8.0):
         if length < 0.01:
             continue
 
-        nx = -dy / length * road_width / 2
-        ny = dx / length * road_width / 2
+        nx = -dy / length * width / 2
+        ny = dx / length * width / 2
 
         verts = [
             bm.verts.new(Vector((ax + nx, ay + ny, 0.05))),

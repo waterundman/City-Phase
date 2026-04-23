@@ -116,6 +116,18 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default="single",
     )
 
+    road_mode: bpy.props.EnumProperty(
+        name="Road Mode",
+        description="Road network generation pattern",
+        items=[
+            ("grid", "Grid / 正交网格", "Standard orthogonal grid with hierarchical roads"),
+            ("radial_ring", "Radial + Ring / 放射环路", "Concentric rings with radial spokes (Paris/Moscow style)"),
+            ("organic", "Organic / 有机生长", "L-system inspired branching growth"),
+            ("mixed", "Mixed / 混合模式", "Radial core with outer grid transition"),
+        ],
+        default="grid",
+    )
+
     city_radius: bpy.props.FloatProperty(
         name="Radius",
         description="City generation radius in meters",
