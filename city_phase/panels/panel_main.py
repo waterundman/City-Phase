@@ -1,4 +1,5 @@
 import bpy
+import json
 
 
 class CITYP_PT_MainPanel(bpy.types.Panel):
@@ -91,10 +92,9 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         row = box.row()
         row.operator("cityp.fetch_osm", icon="URL")
 
-        raw = context.scene.get("cityp_osm_data_raw", "")
+        raw = context.scene.cityp_osm_data_raw
         if raw:
             try:
-                import json
                 od = json.loads(raw)
                 box.label(text=f"Loaded: {len(od.get('elements', []))} elements", icon="CHECKMARK")
             except Exception:
@@ -102,8 +102,6 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
 
         box = layout.box()
         box.label(text="OSM Generation", icon="OUTLINER_OB_MESH")
-        box.prop(props, "avg_floors")
-        box.prop(props, "floor_variance")
         box.prop(props, "setback")
 
     def _draw_render_pipeline(self, layout, context):

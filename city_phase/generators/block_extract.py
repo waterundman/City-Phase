@@ -84,11 +84,11 @@ def extract_blocks_from_graph(graph):
     for cycle in cycles:
         polygon = [graph.nodes[nid] for nid in cycle]
         if len(polygon) >= 3:
-            area = polygon_area(polygon)
+            area = abs(polygon_area(polygon))
             if area > 100:
                 blocks.append({
                     "polygon": polygon,
-                    "area": abs(area),
+                    "area": area,
                     "center": polygon_centroid(polygon),
                 })
 

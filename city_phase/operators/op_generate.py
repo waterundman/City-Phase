@@ -1,4 +1,5 @@
 import bpy
+import hashlib
 import json
 import math
 import random
@@ -78,12 +79,14 @@ class CITYP_OT_Generate(bpy.types.Operator):
         for block in blocks:
             min_area = 200.0
             max_area = 1500.0
+            cx, cy = block["center"]
+            block_seed = int(hashlib.md5(f"{cx:.4f},{cy:.4f},{seed}".encode()).hexdigest(), 16) % 10000
             plots = plot_split.split_block_into_plots(
                 block["polygon"],
                 setback=props.setback,
                 min_area=min_area,
                 max_area=max_area,
-                seed=seed + hash(tuple(block["center"])) % 10000,
+                seed=block_seed,
                 density=props.building_density,
             )
             for plot in plots:
@@ -110,7 +113,8 @@ class CITYP_OT_Generate(bpy.types.Operator):
 
         if props.add_roof_details:
             for obj in list(building_col.objects):
-                detail_gen.add_roof_details(obj, seed + hash(obj.name) % 10000)
+                obj_seed = int(hashlib.md5(obj.name.encode()).hexdigest(), 16) % 10000
+                detail_gen.add_roof_details(obj, seed + obj_seed)
 
         if props.lod_level < 3:
             for obj in list(building_col.objects):
@@ -120,7 +124,7 @@ class CITYP_OT_Generate(bpy.types.Operator):
         return {"FINISHED"}
 
     def _generate_osm(self, props, context):
-        raw = context.scene.get("cityp_osm_data_raw", "")
+        raw = context.scene.cityp_osm_data_raw
         if not raw:
             self.report({"ERROR"}, "No OSM data loaded. Click 'Fetch OSM Data' first.")
             return {"CANCELLED"}
@@ -151,15 +155,18 @@ class CITYP_OT_Generate(bpy.types.Operator):
                 continue
 
             center = polygon_centroid(local_coords)
+            cx, cy = center
+            dist = (cx * cx + cy * cy) ** 0.5
+            dist_ratio = min(dist / 800.0, 1.0)
 
             height = self._infer_height(way)
 
             typology = typology_classifier.classify_typology(
                 area=area,
                 height=height,
-                dist_ratio=0.0,
+                dist_ratio=dist_ratio,
                 osm_tags=way.get("tags", {}),
-                rng=random.Random(way["id"]),
+                rng=random.Random(int(hashlib.md5(str(way["id"]).encode()).hexdigest(), 16)),
             )
 
             building_specs.append({
@@ -168,7 +175,7 @@ class CITYP_OT_Generate(bpy.types.Operator):
                 "area": area,
                 "height": height,
                 "typology": typology,
-                "dist_ratio": 0.0,
+                "dist_ratio": dist_ratio,
             })
 
         self.report({"INFO"}, f"Building specs prepared: {len(building_specs)}")
@@ -191,7 +198,8 @@ class CITYP_OT_Generate(bpy.types.Operator):
 
         if props.add_roof_details:
             for obj in list(building_col.objects):
-                detail_gen.add_roof_details(obj, props.seed + hash(obj.name) % 10000)
+                obj_seed = int(hashlib.md5(obj.name.encode()).hexdigest(), 16) % 10000
+                detail_gen.add_roof_details(obj, props.seed + obj_seed)
 
         if props.lod_level < 3:
             for obj in list(building_col.objects):

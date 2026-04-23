@@ -101,7 +101,19 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None):
             "complex_base_height": config.get("complex_base_height", 18.0),
         }
 
-        cache_key = (typology, sections, round(bw, 1), round(bd, 1), round(height, 1))
+        cache_key = (
+            typology,
+            sections,
+            round(bw, 1),
+            round(bd, 1),
+            round(height, 1),
+            round(params.get("setback_ratio", 0.8), 2),
+            round(params.get("twist_deg", 0), 1),
+            round(params.get("taper_ratio", 0.3), 2),
+            round(params.get("podium_height", 0), 1),
+            round(params.get("tower_ratio", 0.45), 2),
+            round(params.get("complex_base_height", 18.0), 1),
+        )
         if cache_key not in mesh_cache:
             mesh_cache[cache_key] = building_gen.generate_building(params, name=f"CityP_City_Building_{idx}")
 
@@ -111,9 +123,8 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None):
 
         cx, cy = spec["center"]
 
-        obj = bpy.data.objects.new(f"CityP_City_Building_{idx}", source_obj.data)
+        obj = bpy.data.objects.new(f"CityP_City_Building_{idx}", source_obj.data.copy())
         obj.location = Vector((cx, cy, 0))
-        obj.data = source_obj.data
 
         if source_obj.data.materials:
             for mat in source_obj.data.materials:
@@ -121,10 +132,6 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None):
                     obj.data.materials.append(mat)
 
         building_col.objects.link(obj)
-
-    for name, source_obj in mesh_cache.items():
-        if source_obj and source_obj.name.startswith("CityP_City_Building_"):
-            pass
 
     if road_edges:
         _generate_road_mesh(road_edges, road_col)

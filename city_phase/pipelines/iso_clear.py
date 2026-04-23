@@ -43,7 +43,7 @@ def apply(context):
     context.collection.objects.link(sun)
 
     camera = context.scene.camera
-    if camera:
+    if camera and camera.data:
         camera.data.type = "ORTHO"
         camera.data.ortho_scale = 120
         camera.rotation_euler = (math.radians(35.264), 0, math.radians(45))

@@ -22,6 +22,8 @@ class OSMData:
 
 def parse_osm_json(data):
     osm = OSMData()
+    relations = []
+    all_ways = {}  # way_id -> nodes list
 
     if isinstance(data, str):
         data = json.loads(data)
@@ -45,6 +47,7 @@ def parse_osm_json(data):
                 "nodes": elem.get("nodes", []),
                 "tags": tags,
             }
+            all_ways[elem["id"]] = elem.get("nodes", [])
 
             if _is_building(tags):
                 osm.buildings.append(way)
@@ -53,8 +56,39 @@ def parse_osm_json(data):
             else:
                 osm.ways.append(way)
 
+        elif etype == "relation":
+            tags = elem.get("tags", {})
+            if tags.get("type") == "multipolygon" and _is_building(tags):
+                relations.append({
+                    "id": elem["id"],
+                    "tags": tags,
+                    "members": elem.get("members", []),
+                })
+
+    for rel in relations:
+        outer_nodes = _extract_multipolygon_outer(rel, all_ways)
+        if outer_nodes:
+            osm.buildings.append({
+                "id": rel["id"],
+                "nodes": outer_nodes,
+                "tags": rel["tags"],
+                "_relation": True,
+            })
+
     osm.compute_origin()
     return osm
+
+
+def _extract_multipolygon_outer(relation, all_ways):
+    outer_nodes = []
+    for member in relation.get("members", []):
+        if member.get("type") == "way" and member.get("role") == "outer":
+            way_id = member.get("ref")
+            if way_id in all_ways:
+                outer_nodes.extend(all_ways[way_id])
+    if len(outer_nodes) < 3:
+        return None
+    return outer_nodes
 
 
 def parse_osm_xml(xml_string):

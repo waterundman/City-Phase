@@ -80,7 +80,7 @@ def generate_procedural_road_graph(radius, main_spacing, sub_spacing, perturbati
     clean_graph = RoadGraph()
     node_remap = {}
     for nid in valid_nodes:
-        new_id = clean_graph.add_node(graph.nodes[nid][0], graph.nodes[nid][1], node_id=len(clean_graph.nodes) - 1)
+        new_id = clean_graph.add_node(graph.nodes[nid][0], graph.nodes[nid][1])
         node_remap[nid] = new_id
 
     for a, b in valid_edges:

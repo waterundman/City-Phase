@@ -27,7 +27,7 @@ class CITYP_OT_FetchOSM(bpy.types.Operator):
                     props = context.scene.cityp_settings
                     cache_path = self._get_cache_path(props)
                     self._save_cache(self._result, cache_path)
-                    context.scene["cityp_osm_data_raw"] = json.dumps(self._result)
+                    context.scene.cityp_osm_data_raw = json.dumps(self._result)
                     count = len(self._result.get("elements", []))
                     self.report({"INFO"}, f"OSM data fetched: {count} elements")
 
@@ -49,7 +49,7 @@ class CITYP_OT_FetchOSM(bpy.types.Operator):
         cache_path = self._get_cache_path(props)
         cached = self._load_cache(cache_path)
         if cached:
-            context.scene["cityp_osm_data_raw"] = json.dumps(cached)
+            context.scene.cityp_osm_data_raw = json.dumps(cached)
             self.report({"INFO"}, "Loaded OSM data from cache")
             return {"FINISHED"}
 

@@ -36,6 +36,10 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
             ("stepped_tower", "Stepped Tower", "Stepped setback tower with optional twist"),
             ("tapered", "Tapered Tower", "Linear tapered tower from base to top"),
             ("podium_tower", "Podium + Tower", "Commercial podium with residential/office tower"),
+            ("slab", "Slab Block", "Long rectangular slab block, common in Asian residential"),
+            ("old_res", "Old Residential", "Small-scale dense residential, pre-2000s"),
+            ("complex", "Mixed-Use Complex", "Large mixed-use complex with multiple towers on podium"),
+            ("industrial", "Industrial", "Low-span factory with sawtooth roof"),
         ],
         default="stepped_tower",
     )

@@ -183,14 +183,14 @@ def gen_industrial(bm, params, rng):
 
     for i in range(n_teeth):
         x_start = -w / 2 + i * tooth_w
+        tooth_center_x = x_start + tooth_w / 2
         tooth_face = _create_offset_rect(bm, x_start + tooth_w * 0.1, -d / 2 + 1.0, tooth_w * 0.8, d - 2.0, H * 0.7)
         tooth_face = extrude_face(bm, tooth_face, tooth_h)
 
         top_verts = [v for v in tooth_face.verts]
         if len(top_verts) >= 4:
-            slope_offset = tooth_w * 0.15
             for v in top_verts:
-                if v.co.x > 0:
+                if v.co.x > tooth_center_x:
                     v.co.z += tooth_h * 0.5
 
 
@@ -284,9 +284,6 @@ def generate_building(params, name="CityP_Building", context=None):
     if bpy.app.version < (4, 1, 0):
         mesh.use_auto_smooth = True
         mesh.auto_smooth_angle = math.radians(45)
-    else:
-        obj.data.use_auto_smooth = True
-        obj.data.auto_smooth_angle = math.radians(45)
 
     print(f"[CityP] Generated · typology={typology} · height={params['height']}m · seed={params.get('seed', 7)}")
     return obj
