@@ -40,6 +40,11 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
             ("old_res", "Old Residential", "Small-scale dense residential, pre-2000s"),
             ("complex", "Mixed-Use Complex", "Large mixed-use complex with multiple towers on podium"),
             ("industrial", "Industrial", "Low-span factory with sawtooth roof"),
+            ("bauhaus", "Bauhaus / 包豪斯", "Orthogonal grid, free plan, flowing space"),
+            ("constructivist", "Constructivist / 构成主义", "Intersecting volumes, diagonal dynamics"),
+            ("minimalist", "Minimalist / 极简主义", "Pure geometry, wall protagonist, light cutting"),
+            ("postmodern", "Postmodern / 后现代", "Historical motifs, juxtaposition, playful scale"),
+            ("brutalist", "Brutalist / 粗野主义", "Monumental scale, sculptural facade, raw concrete"),
         ],
         default="stepped_tower",
     )

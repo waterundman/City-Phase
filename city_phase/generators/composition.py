@@ -301,6 +301,14 @@ class CompositionBuilder:
         bmesh.ops.translate(self.bm, verts=list(vol_b.verts), vec=delta)
         self.op_log.append(("ALIGN", {"axis": axis.name}))
 
+    def center_volume_on(self, target: Volume, vol: Volume):
+        """Center vol on target in X and Y axes (keeping Z unchanged)."""
+        c1 = target.calc_center()
+        c2 = vol.calc_center()
+        delta = Vector((c1.x - c2.x, c1.y - c2.y, 0))
+        bmesh.ops.translate(self.bm, verts=list(vol.verts), vec=delta)
+        self.op_log.append(("CENTER_ON", {}))
+
     def offset_volume(self, vol: Volume, direction: Vector, distance: float):
         """Offset volume in a direction."""
         vec = direction.normalized() * distance

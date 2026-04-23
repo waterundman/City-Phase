@@ -7,3 +7,8 @@ from .style_prs import (
     ALL_STYLES,
     get_prs,
 )
+from . import bauhaus_gen
+from . import constructivist_gen
+from . import minimalist_gen
+from . import postmodern_gen
+from . import brutalist_gen

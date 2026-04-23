@@ -402,6 +402,41 @@ def generate_building(params, name="CityP_Building", context=None):
 
     _cleanup_objects_by_name(name)
 
+    typology = params.get("typology", "stepped_tower")
+
+    # --- v2.0 Style Generators (use CompositionBuilder) ---
+    if typology == "bauhaus":
+        from .styles import bauhaus_gen
+        obj = bauhaus_gen.generate(params, context=context)
+        if obj:
+            apply_white_clay(obj)
+        return obj
+    elif typology == "constructivist":
+        from .styles import constructivist_gen
+        obj = constructivist_gen.generate(params, context=context)
+        if obj:
+            apply_white_clay(obj)
+        return obj
+    elif typology == "minimalist":
+        from .styles import minimalist_gen
+        obj = minimalist_gen.generate(params, context=context)
+        if obj:
+            apply_white_clay(obj)
+        return obj
+    elif typology == "postmodern":
+        from .styles import postmodern_gen
+        obj = postmodern_gen.generate(params, context=context)
+        if obj:
+            apply_white_clay(obj)
+        return obj
+    elif typology == "brutalist":
+        from .styles import brutalist_gen
+        obj = brutalist_gen.generate(params, context=context)
+        if obj:
+            apply_white_clay(obj)
+        return obj
+
+    # --- Legacy Generators (direct BMesh) ---
     mesh = bpy.data.meshes.new(name + "Mesh")
     bm = bmesh.new()
 
@@ -415,7 +450,6 @@ def generate_building(params, name="CityP_Building", context=None):
         "industrial": gen_industrial,
     }
 
-    typology = params.get("typology", "stepped_tower")
     if typology not in dispatch:
         print(f"[CityP] Unknown typology: {typology}")
         bm.free()

@@ -10,4 +10,9 @@ from .styles import (
     BRUTALIST_PRS,
     ALL_STYLES,
     get_prs,
+    bauhaus_gen,
+    constructivist_gen,
+    minimalist_gen,
+    postmodern_gen,
+    brutalist_gen,
 )
