@@ -329,3 +329,71 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         max=40.0,
         step=100,
     )
+
+    # --- Urban Morphology ---
+    height_mode: bpy.props.EnumProperty(
+        name="Height Mode",
+        description="City height distribution model",
+        items=[
+            ("radial", "Radial / 同心圆", "Concentric height decay from center"),
+            ("corridor", "Corridor / 走廊轴", "Linear development axis (CBD corridor)"),
+        ],
+        default="radial",
+    )
+
+    corridor_angle: bpy.props.FloatProperty(
+        name="Corridor Angle",
+        description="Development axis direction in degrees",
+        default=45.0,
+        min=0.0,
+        max=360.0,
+        step=100,
+    )
+
+    corridor_width: bpy.props.FloatProperty(
+        name="Corridor Width",
+        description="Width of the high-rise corridor in meters",
+        default=250.0,
+        min=50.0,
+        max=800.0,
+        step=100,
+    )
+
+    metro_peak: bpy.props.BoolProperty(
+        name="Metro Peak",
+        description="Add density spikes near simulated metro stations",
+        default=False,
+    )
+
+    metro_intensity: bpy.props.FloatProperty(
+        name="Metro Intensity",
+        description="Strength of metro station height bonus",
+        default=1.0,
+        min=0.0,
+        max=2.0,
+        step=10,
+    )
+
+    waterfront_premium: bpy.props.BoolProperty(
+        name="Waterfront Premium",
+        description="Boost heights near simulated waterfront",
+        default=False,
+    )
+
+    waterfront_dir: bpy.props.FloatProperty(
+        name="Waterfront Dir",
+        description="Direction from center to water edge in degrees",
+        default=0.0,
+        min=0.0,
+        max=360.0,
+        step=100,
+    )
+
+    waterfront_dist: bpy.props.FloatProperty(
+        name="Waterfront Dist",
+        description="Distance from city center to water edge in meters",
+        default=300.0,
+        min=50.0,
+        max=1000.0,
+        step=100,
+    )

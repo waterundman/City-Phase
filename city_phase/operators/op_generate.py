@@ -103,6 +103,14 @@ class CITYP_OT_Generate(bpy.types.Operator):
             avg_floors=props.avg_floors,
             floor_variance=props.floor_variance,
             seed=seed,
+            height_mode=props.height_mode,
+            corridor_angle=props.corridor_angle,
+            corridor_width=props.corridor_width,
+            metro_peak=props.metro_peak,
+            metro_intensity=props.metro_intensity,
+            waterfront_premium=props.waterfront_premium,
+            waterfront_dir=props.waterfront_dir,
+            waterfront_dist=props.waterfront_dist,
         )
 
         road_edges = graph.get_edges_with_width()

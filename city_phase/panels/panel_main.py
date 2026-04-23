@@ -75,6 +75,20 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         box.prop(props, "setback")
 
         box = layout.box()
+        box.label(text="Urban Morphology", icon="IPO_LINEAR")
+        box.prop(props, "height_mode")
+        if props.height_mode == "corridor":
+            box.prop(props, "corridor_angle")
+            box.prop(props, "corridor_width")
+        box.prop(props, "metro_peak")
+        if props.metro_peak:
+            box.prop(props, "metro_intensity")
+        box.prop(props, "waterfront_premium")
+        if props.waterfront_premium:
+            box.prop(props, "waterfront_dir")
+            box.prop(props, "waterfront_dist")
+
+        box = layout.box()
         box.label(text="Roof & Facade", icon="MOD_BUILD")
         box.prop(props, "roof_type")
         box.prop(props, "facade_detail")
