@@ -2,7 +2,7 @@
 
 **Blender Plugin · Procedural City White Model Generator · Render Pipeline Toolkit**
 
-**Version 1.0.0**  
+**Version 2.0.5**  
 [中文](#中文) | [English](#english)
 
 ---
@@ -12,7 +12,8 @@
 ### 项目概述
 **城市相 (CityPhase)** 是一个 Blender 原生插件，接受 OSM 地理数据或程序化参数作为输入，输出可直接渲染的城市白膜（建筑体量模型）。核心哲学：**几何优先**——材质与光照服务于建筑形态的表达，而非掩盖形态。
 
-从 v0.7.0 到 v1.0.0，CityPhase 已完成从「规划示意图级别」到「建筑可视化级别」的跨越。
+从 v0.7.0 到 v1.0.0，CityPhase 已完成从「规划示意图级别」到「建筑可视化级别」的跨越。  
+从 v1.0.0 到 v2.0.0，CityPhase 引入**构成语法引擎**，开始探索从「参数化体量」到「风格化构成」的进化。
 
 ### 核心功能
 
@@ -36,8 +37,21 @@
 - **沿街面朝向分割**：自动识别地块最长边作为街道，建筑 footprint 长轴平行于街道
 - 建筑放置时自动旋转，自然朝向街道
 
-#### 建筑生成 · 7 种类型学
-`stepped_tower` `tapered` `podium_tower` `slab` `old_res` `complex` `industrial`
+#### 建筑生成 · 12 种类型学
+
+**亚洲类型学（7 种）**：`stepped_tower` `tapered` `podium_tower` `slab` `old_res` `complex` `industrial`
+
+**西方风格构成（5 种）** — v2.0 新增：
+| 风格 | 核心法则 |
+|------|---------|
+| **Bauhaus / 包豪斯** | 正交网格、自由平面、流动空间、模数化设计 |
+| **Constructivist / 构成主义** | 体块交叉、对角线动力、不对称平衡、悬挑 |
+| **Minimalist / 极简主义** | 纯粹几何、片墙、光的切割、极致减法 |
+| **Postmodern / 后现代** | 历史符号引用、矛盾并置、色彩、规模游戏 |
+| **Brutalist / 粗野主义** | 巨型体量、雕塑立面、粗粝材质、纪念性 |
+
+- 基于 **CompositionBuilder** 构成语法引擎：PLACE / EXTRUDE / INSET / BOOLEAN / SUBDIVIDE / CONNECT / ALIGN / OFFSET / MATERIAL
+- 每种风格定义独立的 **PRS（参数化规则集）**，控制不变量与变量
 
 #### 屋顶系统 · 6 种类型
 `flat` `hip` `gable` `dome` `terrace` `parapet`
@@ -103,6 +117,8 @@
 | v0.9.0 | 6 种屋顶 + Facade Grammar（窗格/阳台） |
 | v0.9.5 | 城市形态：走廊高度 + 地铁峰值 + 临水溢价 |
 | **v1.0.0** | **视觉增强：Grime + Bevel + 窗格发光 + 大气雾** |
+| v2.0.0 | 构成语法引擎：CompositionBuilder + 9 种谓词语法 |
+| **v2.0.5** | **5 种风格化单体生成器：包豪斯/构成主义/极简/后现代/粗野** |
 
 ---
 
@@ -111,7 +127,8 @@
 ### Overview
 **CityPhase** is a native Blender plugin that generates procedural city white models (architectural massing) from OSM geographic data or procedural parameters. Core philosophy: **Geometry First**—materials and lighting serve the expression of architectural form, not obscure it.
 
-From v0.7.0 to v1.0.0, CityPhase has evolved from "planning sketch level" to "architectural visualization level".
+From v0.7.0 to v1.0.0, CityPhase evolved from "planning sketch level" to "architectural visualization level".  
+From v1.0.0 to v2.0.0, CityPhase introduced the **Composition Engine**, exploring the evolution from "parametric massing" to "stylistic composition".
 
 ### Features
 
@@ -135,8 +152,21 @@ From v0.7.0 to v1.0.0, CityPhase has evolved from "planning sketch level" to "ar
 - **Street-frontage splitting**: Automatically identifies the longest edge as street frontage; building footprints align parallel to streets
 - Buildings auto-rotate to face the street naturally
 
-#### Building Generation · 7 Typologies
-`stepped_tower` `tapered` `podium_tower` `slab` `old_res` `complex` `industrial`
+#### Building Generation · 12 Typologies
+
+**Asian Typologies (7)**: `stepped_tower` `tapered` `podium_tower` `slab` `old_res` `complex` `industrial`
+
+**Western Style Composition (5)** — v2.0 new:
+| Style | Core Principles |
+|-------|-----------------|
+| **Bauhaus** | Orthogonal grid, free plan, flowing space, modular design |
+| **Constructivist** | Volume intersection, diagonal dynamics, asymmetry, cantilever |
+| **Minimalist** | Pure geometry, wall protagonist, light cutting, extreme subtraction |
+| **Postmodern** | Historical motif citation, juxtaposition, color, scale play |
+| **Brutalist** | Monumental scale, sculptural facade, raw material, hero volume |
+
+- Powered by **CompositionBuilder** predicate grammar: PLACE / EXTRUDE / INSET / BOOLEAN / SUBDIVIDE / CONNECT / ALIGN / OFFSET / MATERIAL
+- Each style defines an independent **PRS (Parametric Rule Set)** controlling invariants and variables
 
 #### Roof System · 6 Types
 `flat` `hip` `gable` `dome` `terrace` `parapet`
@@ -202,3 +232,5 @@ From v0.7.0 to v1.0.0, CityPhase has evolved from "planning sketch level" to "ar
 | v0.9.0 | 6 roof types + Facade Grammar (windows / balconies) |
 | v0.9.5 | Urban morphology: corridor height + metro peak + waterfront premium |
 | **v1.0.0** | **Visual enhancement: grime, bevel, window emission, atmospheric fog** |
+| v2.0.0 | Composition Engine: CompositionBuilder + 9 predicate grammar |
+| **v2.0.5** | **5 style generators: Bauhaus / Constructivist / Minimalist / Postmodern / Brutalist** |
