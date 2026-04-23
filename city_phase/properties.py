@@ -397,3 +397,64 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         max=1000.0,
         step=100,
     )
+
+    # --- Visual Enhancement ---
+    apply_grime: bpy.props.BoolProperty(
+        name="Grime Texture",
+        description="Add procedural grime/grunge texture to buildings",
+        default=False,
+    )
+
+    grime_intensity: bpy.props.FloatProperty(
+        name="Grime Intensity",
+        description="Strength of grime overlay",
+        default=0.3,
+        min=0.0,
+        max=1.0,
+        step=10,
+    )
+
+    apply_bevel: bpy.props.BoolProperty(
+        name="Edge Bevel",
+        description="Chamfer sharp edges for realism (LOD 2-3)",
+        default=False,
+    )
+
+    bevel_width: bpy.props.FloatProperty(
+        name="Bevel Width",
+        description="Chamfer width in meters",
+        default=0.08,
+        min=0.01,
+        max=0.5,
+        step=10,
+    )
+
+    night_emission: bpy.props.BoolProperty(
+        name="Window Emission",
+        description="Procedural night window lights via emission shader",
+        default=False,
+    )
+
+    emission_intensity: bpy.props.FloatProperty(
+        name="Emission Strength",
+        description="Window light brightness",
+        default=2.0,
+        min=0.0,
+        max=10.0,
+        step=10,
+    )
+
+    atmospheric_fog: bpy.props.BoolProperty(
+        name="Atmospheric Fog",
+        description="Add scene-level atmospheric perspective fog",
+        default=False,
+    )
+
+    fog_intensity: bpy.props.FloatProperty(
+        name="Fog Density",
+        description="Atmospheric fog density",
+        default=0.03,
+        min=0.0,
+        max=0.2,
+        step=10,
+    )

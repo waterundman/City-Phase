@@ -11,6 +11,7 @@ from ..generators import height_assign
 from ..generators import batch_buildings
 from ..generators import lod_system
 from ..generators import detail_gen
+from ..generators import render_enhance
 from ..utils import osm_parser
 from ..utils import geo_projection
 from ..utils import typology_classifier
@@ -56,6 +57,8 @@ class CITYP_OT_Generate(bpy.types.Operator):
         if obj is None:
             self.report({"ERROR"}, "Generation failed. Check console for details.")
             return {"CANCELLED"}
+
+        self._apply_visual_enhancements([obj], props)
 
         self.report({"INFO"}, f"Generated {props.typology} · {props.height}m")
         return {"FINISHED"}
@@ -133,6 +136,8 @@ class CITYP_OT_Generate(bpy.types.Operator):
         if props.lod_level < 3:
             for obj in list(building_col.objects):
                 lod_system.apply_lod(obj, props.lod_level)
+
+        self._apply_visual_enhancements(list(building_col.objects), props)
 
         self.report({"INFO"}, f"City generated: {len(building_specs)} buildings")
         return {"FINISHED"}
@@ -221,8 +226,23 @@ class CITYP_OT_Generate(bpy.types.Operator):
             for obj in list(building_col.objects):
                 lod_system.apply_lod(obj, props.lod_level)
 
+        self._apply_visual_enhancements(list(building_col.objects), props)
+
         self.report({"INFO"}, f"OSM city generated: {len(building_specs)} buildings, {len(road_edges)} road segments")
         return {"FINISHED"}
+
+    def _apply_visual_enhancements(self, objects, props):
+        if props.apply_grime:
+            for obj in objects:
+                render_enhance.apply_grime(obj, intensity=props.grime_intensity)
+        if props.apply_bevel:
+            for obj in objects:
+                render_enhance.apply_bevel(obj, width=props.bevel_width)
+        if props.night_emission:
+            for obj in objects:
+                render_enhance.apply_window_emission(obj, intensity=props.emission_intensity)
+        if props.atmospheric_fog:
+            render_enhance.apply_atmospheric_fog(intensity=props.fog_intensity)
 
     def _infer_height(self, way):
         tags = way.get("tags", {})

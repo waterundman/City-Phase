@@ -1,7 +1,7 @@
 bl_info = {
     "name": "城市相 CityPhase",
     "author": "CityPhase Team",
-    "version": (0, 9, 5),
+    "version": (1, 0, 0),
     "blender": (3, 6, 0),
     "category": "Add Mesh",
     "description": "Procedural city white model generator with render pipeline presets",

@@ -28,6 +28,7 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         layout.separator()
         op = layout.operator("cityp.generate", icon="PLAY")
 
+        self._draw_visual_enhancement(layout, props)
         self._draw_render_pipeline(layout, context)
         self._draw_detail_export(layout, props)
 
@@ -132,6 +133,22 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         box.prop(context.scene, "cityp_pipeline", text="Preset")
         row = box.row()
         row.operator("cityp.apply_pipeline", icon="PLAY", text="Apply Pipeline").pipeline = context.scene.cityp_pipeline
+
+    def _draw_visual_enhancement(self, layout, props):
+        box = layout.box()
+        box.label(text="Visual Enhancement", icon="SHADING_RENDERED")
+        box.prop(props, "apply_grime")
+        if props.apply_grime:
+            box.prop(props, "grime_intensity")
+        box.prop(props, "apply_bevel")
+        if props.apply_bevel:
+            box.prop(props, "bevel_width")
+        box.prop(props, "night_emission")
+        if props.night_emission:
+            box.prop(props, "emission_intensity")
+        box.prop(props, "atmospheric_fog")
+        if props.atmospheric_fog:
+            box.prop(props, "fog_intensity")
 
     def _draw_detail_export(self, layout, props):
         box = layout.box()
