@@ -46,6 +46,157 @@ def add_floor_loop(bm, face, inset=0.4):
     bmesh.ops.inset_individual(bm, faces=[face], thickness=inset, depth=0.0)
 
 
+# ============================================================
+# Roof System
+# ============================================================
+def _get_top_faces(bm):
+    max_z = max(v.co.z for v in bm.verts) if bm.verts else 0.0
+    top_faces = [f for f in bm.faces if all(v.co.z >= max_z - 0.01 for v in f.verts)]
+    return top_faces
+
+
+def _apply_roof(bm, params, rng):
+    roof_type = params.get("roof_type", "flat")
+    if roof_type == "flat":
+        return
+
+    top_faces = _get_top_faces(bm)
+    if not top_faces:
+        return
+
+    if roof_type == "hip":
+        _roof_hip(bm, top_faces)
+    elif roof_type == "gable":
+        _roof_gable(bm, top_faces)
+    elif roof_type == "dome":
+        _roof_dome(bm, top_faces)
+    elif roof_type == "terrace":
+        _roof_terrace(bm, top_faces)
+    elif roof_type == "parapet":
+        _roof_parapet(bm, top_faces)
+
+
+def _roof_hip(bm, top_faces):
+    for face in top_faces:
+        if len(face.verts) < 3:
+            continue
+        top = extrude_face(bm, face, face.calc_center_median().z * 0.05 + 0.5)
+        scale_face_xy(bm, top, 0.01, 0.01)
+
+
+def _roof_gable(bm, top_faces):
+    for face in top_faces:
+        if len(face.verts) < 4:
+            _roof_hip(bm, [face])
+            continue
+        # Extrude then squash along short axis
+        top = extrude_face(bm, face, face.calc_center_median().z * 0.05 + 1.0)
+        # Identify long axis by bounding box
+        xs = [v.co.x for v in top.verts]
+        ys = [v.co.y for v in top.verts]
+        dx = max(xs) - min(xs)
+        dy = max(ys) - min(ys)
+        if dx >= dy:
+            scale_face_xy(bm, top, 1.0, 0.01)
+        else:
+            scale_face_xy(bm, top, 0.01, 1.0)
+
+
+def _roof_dome(bm, top_faces):
+    for face in top_faces:
+        if len(face.verts) < 3:
+            continue
+        steps = [(0.6, 0.5), (0.35, 0.4), (0.15, 0.3), (0.05, 0.2)]
+        current = face
+        for sx, dz in steps:
+            current = extrude_face(bm, current, dz)
+            scale_face_xy(bm, current, sx, sx)
+
+
+def _roof_terrace(bm, top_faces):
+    for face in top_faces:
+        if len(face.verts) < 3:
+            continue
+        steps = 3
+        for _ in range(steps):
+            bmesh.ops.inset_individual(bm, faces=[face], thickness=0.8, depth=0.0)
+            # After inset, extrude the newly created inner face
+            # Inset creates new faces; find the innermost one by area
+            inner = min(face.verts[0].link_faces, key=lambda f: f.calc_area())
+            face = extrude_face(bm, inner, 1.2)
+
+
+def _roof_parapet(bm, top_faces):
+    for face in top_faces:
+        if len(face.verts) < 3:
+            continue
+        # Extrude boundary edges upward
+        edges = [e for e in face.edges]
+        ret = bmesh.ops.extrude_edge_region(bm, edges=edges)
+        new_verts = [g for g in ret["geom"] if isinstance(g, bmesh.types.BMVert)]
+        bmesh.ops.translate(bm, verts=new_verts, vec=Vector((0, 0, 1.0)))
+
+
+# ============================================================
+# Facade Grammar
+# ============================================================
+def _get_vertical_faces(bm):
+    return [f for f in bm.faces if abs(f.normal.z) < 0.1 and len(f.verts) >= 3]
+
+
+def _apply_facade(bm, params, rng):
+    detail = params.get("facade_detail", "none")
+    if detail == "none":
+        return
+
+    vertical_faces = _get_vertical_faces(bm)
+    if not vertical_faces:
+        return
+
+    if detail in ("windows", "full"):
+        _facade_windows(bm, vertical_faces)
+    if detail in ("balcony", "full"):
+        _facade_balconies(bm, vertical_faces)
+
+
+def _facade_windows(bm, faces):
+    for face in faces:
+        area = face.calc_area()
+        if area < 4.0:
+            continue
+        # Recessed panel
+        inset = max(0.1, min(0.4, area ** 0.5 * 0.08))
+        try:
+            bmesh.ops.inset_individual(bm, faces=[face], thickness=inset, depth=-0.15)
+        except Exception:
+            pass
+
+
+def _facade_balconies(bm, faces):
+    for face in faces:
+        area = face.calc_area()
+        if area < 6.0:
+            continue
+        try:
+            ret = bmesh.ops.extrude_face_region(bm, geom=[face])
+            new_faces = [g for g in ret["geom"] if isinstance(g, bmesh.types.BMFace)]
+            new_verts = [g for g in ret["geom"] if isinstance(g, bmesh.types.BMVert)]
+            # Move outward along normal
+            n = face.normal
+            bmesh.ops.translate(bm, verts=new_verts, vec=n * 0.4)
+            # Scale down slightly to look like a balcony slab
+            for f in new_faces:
+                center = f.calc_center_median()
+                for v in f.verts:
+                    v.co.x = center.x + (v.co.x - center.x) * 0.85
+                    v.co.y = center.y + (v.co.y - center.y) * 0.85
+        except Exception:
+            pass
+
+
+# ============================================================
+# Typology Generators
+# ============================================================
 def gen_stepped_tower(bm, params, rng):
     w, d = params["base_w"], params["base_d"]
     H = params["height"]
@@ -271,6 +422,10 @@ def generate_building(params, name="CityP_Building", context=None):
         return None
 
     dispatch[typology](bm, params, rng)
+
+    # Apply roof & facade before finalizing
+    _apply_roof(bm, params, rng)
+    _apply_facade(bm, params, rng)
 
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
     bm.to_mesh(mesh)

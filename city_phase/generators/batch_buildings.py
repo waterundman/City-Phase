@@ -39,7 +39,7 @@ TYPOLOGY_CONFIG = {
 }
 
 
-def batch_place_buildings(building_specs, seed, road_edges=None, context=None, road_width=8.0):
+def batch_place_buildings(building_specs, seed, road_edges=None, context=None, road_width=8.0, roof_type="flat", facade_detail="none"):
     if context is None:
         context = bpy.context
 
@@ -99,6 +99,8 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None, r
             "podium_height": min(height * config.get("podium_height_ratio", 0.2), height * 0.3),
             "tower_ratio": config.get("tower_ratio", 0.45),
             "complex_base_height": config.get("complex_base_height", 18.0),
+            "roof_type": roof_type,
+            "facade_detail": facade_detail,
         }
 
         cache_key = (
@@ -113,6 +115,8 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None, r
             round(params.get("podium_height", 0), 1),
             round(params.get("tower_ratio", 0.45), 2),
             round(params.get("complex_base_height", 18.0), 1),
+            roof_type,
+            facade_detail,
         )
         if cache_key not in mesh_cache:
             mesh_cache[cache_key] = building_gen.generate_building(params, name=f"CityP_City_Building_{idx}")

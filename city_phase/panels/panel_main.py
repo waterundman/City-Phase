@@ -74,6 +74,11 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         box.prop(props, "floor_variance")
         box.prop(props, "setback")
 
+        box = layout.box()
+        box.label(text="Roof & Facade", icon="MOD_BUILD")
+        box.prop(props, "roof_type")
+        box.prop(props, "facade_detail")
+
     def _draw_osm(self, layout, props):
         box = layout.box()
         box.label(text="OSM Data Source", icon="WORLD")

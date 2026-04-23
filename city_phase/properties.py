@@ -295,6 +295,32 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=False,
     )
 
+    roof_type: bpy.props.EnumProperty(
+        name="Roof Type",
+        description="Building roof style",
+        items=[
+            ("flat", "Flat / 平屋顶", "Simple flat roof"),
+            ("hip", "Hip / 四坡顶", "Four-sided sloping roof"),
+            ("gable", "Gable / 人字顶", "Triangular gable roof"),
+            ("dome", "Dome / 穹顶", "Domed roof"),
+            ("terrace", "Terrace / 退台", "Stepped terrace roof"),
+            ("parapet", "Parapet / 女儿墙", "Flat roof with parapet wall"),
+        ],
+        default="flat",
+    )
+
+    facade_detail: bpy.props.EnumProperty(
+        name="Facade Detail",
+        description="Level of facade geometric detail",
+        items=[
+            ("none", "None / 无", "Smooth walls only"),
+            ("windows", "Windows / 窗格", "Recessed window panels"),
+            ("balcony", "Balcony / 阳台", "Extruded balconies"),
+            ("full", "Full / 完整", "Windows + balconies"),
+        ],
+        default="none",
+    )
+
     road_width: bpy.props.FloatProperty(
         name="Road Width",
         description="Road surface width in meters",

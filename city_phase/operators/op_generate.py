@@ -47,6 +47,8 @@ class CITYP_OT_Generate(bpy.types.Operator):
             "taper_ratio": props.taper_ratio,
             "podium_height": props.podium_height,
             "tower_ratio": props.tower_ratio,
+            "roof_type": props.roof_type,
+            "facade_detail": props.facade_detail,
         }
 
         obj = building_gen.generate_building(params, context=context)
@@ -111,6 +113,8 @@ class CITYP_OT_Generate(bpy.types.Operator):
             road_edges=road_edges,
             context=context,
             road_width=props.road_width,
+            roof_type=props.roof_type,
+            facade_detail=props.facade_detail,
         )
 
         if props.add_roof_details:
@@ -196,6 +200,8 @@ class CITYP_OT_Generate(bpy.types.Operator):
             seed=props.seed,
             road_edges=road_edges,
             context=context,
+            roof_type=props.roof_type,
+            facade_detail=props.facade_detail,
         )
 
         if props.add_roof_details:
