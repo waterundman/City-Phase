@@ -64,8 +64,8 @@ def gen_stepped_tower(bm, params, rng):
         sh = section_heights[i]
         face = extrude_face(bm, face, sh)
         if i < N - 1:
-            rx = sr + rng.uniform(-sv, sv)
-            ry = sr + rng.uniform(-sv, sv)
+            rx = max(0.3, min(1.5, sr + rng.uniform(-sv, sv)))
+            ry = max(0.3, min(1.5, sr + rng.uniform(-sv, sv)))
             scale_face_xy(bm, face, rx, ry)
             if twist != 0:
                 sign = 1 if i % 2 == 0 else -1
@@ -110,8 +110,8 @@ def gen_podium_tower(bm, params, rng):
     for i in range(N):
         face = extrude_face(bm, face, section_heights[i])
         if i < N - 1:
-            rx = sr + rng.uniform(-sv, sv)
-            ry = sr + rng.uniform(-sv, sv)
+            rx = max(0.3, min(1.5, sr + rng.uniform(-sv, sv)))
+            ry = max(0.3, min(1.5, sr + rng.uniform(-sv, sv)))
             scale_face_xy(bm, face, rx, ry)
             if twist != 0:
                 rotate_face_z(bm, face, twist * (1 if i % 2 == 0 else -1))
@@ -219,6 +219,12 @@ def _create_offset_rect(bm, cx, cy, w, d, z):
     return face
 
 
+def _cleanup_objects_by_name(prefix):
+    to_remove = [obj for obj in bpy.data.objects if obj.name.startswith(prefix)]
+    for obj in to_remove:
+        bpy.data.objects.remove(obj, do_unlink=True)
+
+
 def apply_white_clay(obj):
     mat_name = "CityP_WhiteClay"
     mat = bpy.data.materials.get(mat_name)
@@ -243,9 +249,7 @@ def generate_building(params, name="CityP_Building", context=None):
 
     rng = random.Random(params.get("seed", 7))
 
-    for obj in list(bpy.data.objects):
-        if obj.name.startswith(name):
-            bpy.data.objects.remove(obj, do_unlink=True)
+    _cleanup_objects_by_name(name)
 
     mesh = bpy.data.meshes.new(name + "Mesh")
     bm = bmesh.new()

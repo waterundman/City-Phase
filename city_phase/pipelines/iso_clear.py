@@ -1,5 +1,6 @@
 import bpy
 import math
+from ._common import setup_world_nodes, cleanup_cityp_lights, add_light_to_scene, update_material
 
 
 def apply(context):
@@ -10,9 +11,7 @@ def apply(context):
         world = bpy.data.worlds.new("CityP_World")
         scene.world = world
 
-    world.use_nodes = True
-    tree = world.node_tree
-    tree.nodes.clear()
+    tree = setup_world_nodes(world)
 
     bg = tree.nodes.new("ShaderNodeBackground")
     bg.inputs["Color"].default_value = (0.95, 0.92, 0.85, 1.0)
@@ -30,17 +29,12 @@ def apply(context):
     eevee.use_bloom = False
     eevee.use_gtao = False
 
-    for light in list(bpy.data.lights):
-        if light.name.startswith("CityP_"):
-            bpy.data.lights.remove(light)
+    cleanup_cityp_lights()
 
-    sun_data = bpy.data.lights.new("CityP_IsoSun", "SUN")
-    sun_data.energy = 5.0
-    sun_data.angle = 0.0
-    sun_data.color = (1.0, 0.98, 0.92)
-    sun = bpy.data.objects.new("CityP_IsoSun", sun_data)
-    sun.rotation_euler = (math.radians(35.264), 0, math.radians(45))
-    context.collection.objects.link(sun)
+    add_light_to_scene(
+        context, "CityP_IsoSun", "SUN",
+        energy=5.0, angle=0.0, color=(1.0, 0.98, 0.92),
+    ).rotation_euler = (math.radians(35.264), 0, math.radians(45))
 
     camera = context.scene.camera
     if camera and camera.data:
@@ -56,14 +50,7 @@ def apply(context):
 
     lineset = scene.freestyle_settings.linesets.new("CityP_Outline")
     lineset.select_silhouette = True
-    lineset.select_border = False
     lineset.select_contour = True
-    lineset.select_suggestive_contour = False
-    lineset.select_ridge_valley = False
-    lineset.select_crease = False
-    lineset.select_edge_mark = False
-    lineset.select_external_contour = False
-    lineset.select_material_boundary = False
 
     for module in scene.freestyle_settings.modules:
         scene.freestyle_settings.modules.remove(module)
@@ -71,28 +58,22 @@ def apply(context):
     parameter_editor = scene.freestyle_settings.modules.new("ParameterEditor")
     parameter_editor.active = True
 
-    line_style = bpy.data.linestyles.new("CityP_IsoLine")
+    line_style = bpy.data.linestyles.get("CityP_IsoLine")
+    if not line_style:
+        line_style = bpy.data.linestyles.new("CityP_IsoLine")
     line_style.thickness = 1.5
     line_style.color = (0.15, 0.15, 0.18)
     lineset.linestyle = line_style
 
-    for mat in bpy.data.materials:
-        if mat.name == "CityP_WhiteClay":
-            mat.use_nodes = True
-            nodes = mat.node_tree.nodes
-            bsdf = nodes.get("Principled BSDF")
-            if bsdf:
-                bsdf.inputs["Base Color"].default_value = (0.95, 0.92, 0.85, 1.0)
-                bsdf.inputs["Roughness"].default_value = 1.0
-                bsdf.inputs["Specular IOR Level"].default_value = 0.0
-
-        elif mat.name == "CityP_RoadMat":
-            mat.use_nodes = True
-            nodes = mat.node_tree.nodes
-            bsdf = nodes.get("Principled BSDF")
-            if bsdf:
-                bsdf.inputs["Base Color"].default_value = (0.65, 0.74, 0.83, 1.0)
-                bsdf.inputs["Roughness"].default_value = 1.0
+    update_material("CityP_WhiteClay", {
+        "Base Color": (0.95, 0.92, 0.85, 1.0),
+        "Roughness": 1.0,
+        "Specular IOR Level": 0.0,
+    })
+    update_material("CityP_RoadMat", {
+        "Base Color": (0.65, 0.74, 0.83, 1.0),
+        "Roughness": 1.0,
+    })
 
     scene.view_settings.view_transform = "Standard"
     scene.view_settings.look = "None"

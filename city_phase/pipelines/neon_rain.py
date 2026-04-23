@@ -1,5 +1,6 @@
 import bpy
 import math
+from ._common import setup_world_nodes, cleanup_cityp_lights, add_light_to_scene, update_material
 
 
 def apply(context):
@@ -10,9 +11,7 @@ def apply(context):
         world = bpy.data.worlds.new("CityP_World")
         scene.world = world
 
-    world.use_nodes = True
-    tree = world.node_tree
-    tree.nodes.clear()
+    tree = setup_world_nodes(world)
 
     bg = tree.nodes.new("ShaderNodeBackground")
     bg.inputs["Color"].default_value = (0.02, 0.02, 0.05, 1.0)
@@ -34,16 +33,12 @@ def apply(context):
     eevee.use_gtao = True
     eevee.gtao_quality = 0.7
 
-    for light in list(bpy.data.lights):
-        if light.name.startswith("CityP_"):
-            bpy.data.lights.remove(light)
+    cleanup_cityp_lights()
 
-    ambient_data = bpy.data.lights.new("CityP_Ambient", "POINT")
-    ambient_data.energy = 5
-    ambient_data.color = (0.1, 0.1, 0.2)
-    ambient = bpy.data.objects.new("CityP_Ambient", ambient_data)
-    ambient.location = (0, 0, 30)
-    context.collection.objects.link(ambient)
+    add_light_to_scene(
+        context, "CityP_Ambient", "POINT",
+        energy=5, color=(0.1, 0.1, 0.2),
+    ).location = (0, 0, 30)
 
     neon_colors = [
         (0.88, 0.12, 0.24),
@@ -53,25 +48,19 @@ def apply(context):
 
     for i, color in enumerate(neon_colors):
         for j in range(3):
-            neon_data = bpy.data.lights.new(f"CityP_Neon_{i}_{j}", "POINT")
-            neon_data.energy = 15
-            neon_data.color = color
-            neon_data.use_shadow = False
-            neon = bpy.data.objects.new(f"CityP_Neon_{i}_{j}", neon_data)
             angle = (i / 3) * 6.28 + j * 0.5
             radius = 30 + j * 15
-            neon.location = (radius * math.cos(angle), radius * math.sin(angle), 5 + j * 10)
-            context.collection.objects.link(neon)
+            obj = add_light_to_scene(
+                context, f"CityP_Neon_{i}_{j}", "POINT",
+                energy=15, color=color, use_shadow=False,
+            )
+            obj.location = (radius * math.cos(angle), radius * math.sin(angle), 5 + j * 10)
 
-    for mat in bpy.data.materials:
-        if mat.name == "CityP_RoadMat":
-            mat.use_nodes = True
-            nodes = mat.node_tree.nodes
-            bsdf = nodes.get("Principled BSDF")
-            if bsdf:
-                bsdf.inputs["Base Color"].default_value = (0.05, 0.05, 0.08, 1.0)
-                bsdf.inputs["Roughness"].default_value = 0.2
-                bsdf.inputs["Metallic"].default_value = 0.1
+    update_material("CityP_RoadMat", {
+        "Base Color": (0.05, 0.05, 0.08, 1.0),
+        "Roughness": 0.2,
+        "Metallic": 0.1,
+    })
 
     scene.view_settings.view_transform = "Standard"
     scene.view_settings.look = "None"

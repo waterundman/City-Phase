@@ -151,11 +151,9 @@ def _ensure_collection(name, context):
     return col
 
 
-def _generate_road_mesh(road_edges, road_col):
+def _generate_road_mesh(road_edges, road_col, road_width=8.0):
     mesh = bpy.data.meshes.new("CityP_City_Roads")
     bm = bmesh.new()
-
-    road_width = 8.0
 
     for a, b in road_edges:
         ax, ay = a

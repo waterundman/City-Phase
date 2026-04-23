@@ -1,4 +1,5 @@
 import bpy
+from ._common import setup_world_nodes, cleanup_cityp_lights, add_light_to_scene, update_material
 
 
 def apply(context):
@@ -9,9 +10,7 @@ def apply(context):
         world = bpy.data.worlds.new("CityP_World")
         scene.world = world
 
-    world.use_nodes = True
-    tree = world.node_tree
-    tree.nodes.clear()
+    tree = setup_world_nodes(world)
 
     bg = tree.nodes.new("ShaderNodeTexEnvironment")
     bg.location = (-300, 200)
@@ -42,42 +41,27 @@ def apply(context):
     eevee.use_gtao = True
     eevee.gtao_quality = 0.5
 
-    for light in list(bpy.data.lights):
-        if light.name.startswith("CityP_"):
-            bpy.data.lights.remove(light)
+    cleanup_cityp_lights()
 
-    sun_data = bpy.data.lights.new("CityP_SoftLight", "SUN")
-    sun_data.energy = 3.0
-    sun_data.angle = 0.1
-    sun_data.color = (0.85, 0.88, 0.95)
-    sun = bpy.data.objects.new("CityP_SoftLight", sun_data)
-    sun.rotation_euler = (0.96, 0, 0.96)
-    context.collection.objects.link(sun)
+    add_light_to_scene(
+        context, "CityP_SoftLight", "SUN",
+        energy=3.0, angle=0.1, color=(0.85, 0.88, 0.95),
+    ).rotation_euler = (0.96, 0, 0.96)
 
-    fill_data = bpy.data.lights.new("CityP_Fill", "AREA")
-    fill_data.energy = 100
-    fill_data.color = (0.5, 0.55, 0.7)
-    fill_data.size = 20
-    fill = bpy.data.objects.new("CityP_Fill", fill_data)
-    fill.location = (0, 0, 10)
-    context.collection.objects.link(fill)
+    add_light_to_scene(
+        context, "CityP_Fill", "AREA",
+        energy=100, color=(0.5, 0.55, 0.7), size=20,
+    ).location = (0, 0, 10)
 
-    for mat in bpy.data.materials:
-        if mat.name == "CityP_WhiteClay":
-            mat.use_nodes = True
-            nodes = mat.node_tree.nodes
-            bsdf = nodes.get("Principled BSDF")
-            if bsdf:
-                bsdf.inputs["Base Color"].default_value = (0.94, 0.93, 0.92, 1.0)
-                bsdf.inputs["Roughness"].default_value = 0.85
-                bsdf.inputs["Specular IOR Level"].default_value = 0.05
-        elif mat.name == "CityP_RoadMat":
-            mat.use_nodes = True
-            nodes = mat.node_tree.nodes
-            bsdf = nodes.get("Principled BSDF")
-            if bsdf:
-                bsdf.inputs["Base Color"].default_value = (0.75, 0.75, 0.78, 1.0)
-                bsdf.inputs["Roughness"].default_value = 0.9
+    update_material("CityP_WhiteClay", {
+        "Base Color": (0.94, 0.93, 0.92, 1.0),
+        "Roughness": 0.85,
+        "Specular IOR Level": 0.05,
+    })
+    update_material("CityP_RoadMat", {
+        "Base Color": (0.75, 0.75, 0.78, 1.0),
+        "Roughness": 0.9,
+    })
 
     scene.render.film_transparent = False
     scene.view_settings.view_transform = "Standard"

@@ -2,6 +2,39 @@ import bpy
 import os
 
 
+def _deselect_all():
+    bpy.ops.object.select_all(action='DESELECT')
+
+
+def _restore_selection(prev_sel, prev_active):
+    _deselect_all()
+    for obj in prev_sel:
+        if obj.name in bpy.data.objects:
+            obj.select_set(True)
+    if prev_active and prev_active.name in bpy.data.objects:
+        bpy.context.view_layer.objects.active = prev_active
+
+
+def _export_scene(filepath, fmt):
+    if fmt == "FBX":
+        bpy.ops.export_scene.fbx(
+            filepath=filepath,
+            use_selection=True,
+            apply_unit_scale=True,
+        )
+    elif fmt == "OBJ":
+        bpy.ops.export_scene.obj(
+            filepath=filepath,
+            use_selection=True,
+            use_materials=False,
+        )
+    elif fmt == "USD":
+        bpy.ops.export_scene.usd(
+            filepath=filepath,
+            use_selection=True,
+        )
+
+
 class CITYP_OT_Export(bpy.types.Operator):
     bl_idname = "cityp.export"
     bl_label = "Export City"
@@ -57,73 +90,33 @@ class CITYP_OT_Export(bpy.types.Operator):
             self.report({"WARNING"}, "No objects to export")
             return {"CANCELLED"}
 
-        prev_sel = context.selected_objects
+        prev_sel = list(context.selected_objects)
         prev_active = context.view_layer.objects.active
 
+        _deselect_all()
         for obj in all_objs:
             obj.select_set(True)
         context.view_layer.objects.active = all_objs[0] if all_objs else None
 
-        if fmt == "FBX":
-            bpy.ops.export_scene.fbx(
-                filepath=filepath,
-                use_selection=True,
-                apply_unit_scale=True,
-            )
-        elif fmt == "OBJ":
-            bpy.ops.export_scene.obj(
-                filepath=filepath,
-                use_selection=True,
-                use_materials=False,
-            )
-        elif fmt == "USD":
-            bpy.ops.export_scene.usd(
-                filepath=filepath,
-                use_selection=True,
-            )
+        _export_scene(filepath, fmt)
 
-        for obj in bpy.data.objects:
-            obj.select_set(False)
-        for obj in prev_sel:
-            obj.select_set(True)
-        context.view_layer.objects.active = prev_active
+        _restore_selection(prev_sel, prev_active)
 
         self.report({"INFO"}, f"Exported merged → {filepath}")
         return {"FINISHED"}
 
     def _export_collection(self, context, col, filepath, fmt):
-        prev_sel = context.selected_objects
+        prev_sel = list(context.selected_objects)
         prev_active = context.view_layer.objects.active
 
-        for obj in bpy.data.objects:
-            obj.select_set(False)
+        _deselect_all()
         for obj in col.objects:
             obj.select_set(True)
         context.view_layer.objects.active = col.objects[0] if col.objects else None
 
-        if fmt == "FBX":
-            bpy.ops.export_scene.fbx(
-                filepath=filepath,
-                use_selection=True,
-                apply_unit_scale=True,
-            )
-        elif fmt == "OBJ":
-            bpy.ops.export_scene.obj(
-                filepath=filepath,
-                use_selection=True,
-                use_materials=False,
-            )
-        elif fmt == "USD":
-            bpy.ops.export_scene.usd(
-                filepath=filepath,
-                use_selection=True,
-            )
+        _export_scene(filepath, fmt)
 
-        for obj in bpy.data.objects:
-            obj.select_set(False)
-        for obj in prev_sel:
-            obj.select_set(True)
-        context.view_layer.objects.active = prev_active
+        _restore_selection(prev_sel, prev_active)
 
     def invoke(self, context, event):
         props = context.scene.cityp_settings

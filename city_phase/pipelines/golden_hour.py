@@ -1,5 +1,6 @@
 import bpy
 import math
+from ._common import setup_world_nodes, cleanup_cityp_lights, add_light_to_scene
 
 
 def apply(context):
@@ -10,9 +11,7 @@ def apply(context):
         world = bpy.data.worlds.new("CityP_World")
         scene.world = world
 
-    world.use_nodes = True
-    tree = world.node_tree
-    tree.nodes.clear()
+    tree = setup_world_nodes(world)
 
     sky = tree.nodes.new("ShaderNodeTexSky")
     sky.sky_type = "PREETHAM2"
@@ -30,35 +29,22 @@ def apply(context):
     scene.cycles.samples = 256
     scene.cycles.use_denoising = True
 
-    for light in list(bpy.data.lights):
-        if light.name.startswith("CityP_"):
-            bpy.data.lights.remove(light)
+    cleanup_cityp_lights()
 
-    sun_data = bpy.data.lights.new("CityP_GoldenSun", "SUN")
-    sun_data.energy = 8.0
-    sun_data.angle = 0.02
-    sun_data.color = (0.96, 0.65, 0.35)
-    sun = bpy.data.objects.new("CityP_GoldenSun", sun_data)
-    sun.rotation_euler = (math.radians(15), 0, math.radians(45))
-    context.collection.objects.link(sun)
+    add_light_to_scene(
+        context, "CityP_GoldenSun", "SUN",
+        energy=8.0, angle=0.02, color=(0.96, 0.65, 0.35),
+    ).rotation_euler = (math.radians(15), 0, math.radians(45))
 
-    fill_data = bpy.data.lights.new("CityP_CoolFill", "AREA")
-    fill_data.energy = 50
-    fill_data.color = (0.35, 0.4, 0.65)
-    fill_data.size = 30
-    fill = bpy.data.objects.new("CityP_CoolFill", fill_data)
-    fill.location = (-15, 10, 5)
-    fill.rotation_euler = (math.radians(30), 0, math.radians(-60))
-    context.collection.objects.link(fill)
+    add_light_to_scene(
+        context, "CityP_CoolFill", "AREA",
+        energy=50, color=(0.35, 0.4, 0.65), size=30,
+    )
 
-    rim_data = bpy.data.lights.new("CityP_Rim", "AREA")
-    rim_data.energy = 30
-    rim_data.color = (0.8, 0.5, 0.3)
-    rim_data.size = 15
-    rim = bpy.data.objects.new("CityP_Rim", rim_data)
-    rim.location = (10, -10, 3)
-    rim.rotation_euler = (math.radians(60), 0, math.radians(135))
-    context.collection.objects.link(rim)
+    add_light_to_scene(
+        context, "CityP_Rim", "AREA",
+        energy=30, color=(0.8, 0.5, 0.3), size=15,
+    )
 
     scene.view_settings.view_transform = "Filmic"
     scene.view_settings.look = "Medium High Contrast"
