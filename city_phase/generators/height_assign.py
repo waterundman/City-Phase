@@ -42,6 +42,7 @@ def assign_heights(plots, city_center, avg_floors, floor_variance, seed, use_bim
             "height": height,
             "typology": typology,
             "dist_ratio": dist_ratio,
+            "street_front_angle": plot.get("street_front_angle", 0.0),
         })
 
     return building_specs

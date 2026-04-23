@@ -126,6 +126,10 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None, r
         obj = bpy.data.objects.new(f"CityP_City_Building_{idx}", source_obj.data.copy())
         obj.location = Vector((cx, cy, 0))
 
+        street_angle = spec.get("street_front_angle", 0.0)
+        if street_angle != 0.0:
+            obj.rotation_euler = (0, 0, street_angle)
+
         if source_obj.data.materials:
             for mat in source_obj.data.materials:
                 if mat:
