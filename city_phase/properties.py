@@ -8,7 +8,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=24.0,
         min=4.0,
         max=200.0,
-        step=10,
+        step=100,
     )
 
     base_d: bpy.props.FloatProperty(
@@ -17,7 +17,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=18.0,
         min=4.0,
         max=200.0,
-        step=10,
+        step=100,
     )
 
     height: bpy.props.FloatProperty(
@@ -26,7 +26,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=120.0,
         min=3.0,
         max=500.0,
-        step=10,
+        step=100,
     )
 
     typology: bpy.props.EnumProperty(
@@ -66,7 +66,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=0.80,
         min=0.5,
         max=0.95,
-        step=1,
+        step=10,
     )
 
     twist_deg: bpy.props.FloatProperty(
@@ -75,7 +75,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=5.0,
         min=-30.0,
         max=30.0,
-        step=1,
+        step=100,
     )
 
     taper_ratio: bpy.props.FloatProperty(
@@ -84,7 +84,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=0.30,
         min=0.05,
         max=0.8,
-        step=1,
+        step=10,
     )
 
     podium_height: bpy.props.FloatProperty(
@@ -93,7 +93,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=22.0,
         min=3.0,
         max=80.0,
-        step=10,
+        step=100,
     )
 
     tower_ratio: bpy.props.FloatProperty(
@@ -102,7 +102,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=0.45,
         min=0.1,
         max=0.9,
-        step=1,
+        step=10,
     )
 
     gen_mode: bpy.props.EnumProperty(
@@ -122,7 +122,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=400.0,
         min=100.0,
         max=2000.0,
-        step=100,
+        step=1000,
     )
 
     main_grid_spacing: bpy.props.FloatProperty(
@@ -131,7 +131,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=300.0,
         min=100.0,
         max=800.0,
-        step=10,
+        step=100,
     )
 
     sub_grid_spacing: bpy.props.FloatProperty(
@@ -140,7 +140,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=90.0,
         min=40.0,
         max=300.0,
-        step=10,
+        step=100,
     )
 
     perturbation_pct: bpy.props.FloatProperty(
@@ -149,7 +149,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=15.0,
         min=0.0,
         max=40.0,
-        step=1,
+        step=100,
     )
 
     building_density: bpy.props.FloatProperty(
@@ -158,7 +158,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=0.75,
         min=0.1,
         max=1.0,
-        step=1,
+        step=10,
     )
 
     avg_floors: bpy.props.IntProperty(
@@ -183,7 +183,7 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         default=2.0,
         min=0.0,
         max=20.0,
-        step=1,
+        step=100,
     )
 
     osm_source: bpy.props.EnumProperty(
@@ -281,4 +281,13 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         name="Roof Details",
         description="Add rooftop equipment (cooling towers, water tanks)",
         default=False,
+    )
+
+    road_width: bpy.props.FloatProperty(
+        name="Road Width",
+        description="Road surface width in meters",
+        default=8.0,
+        min=2.0,
+        max=40.0,
+        step=100,
     )

@@ -64,6 +64,7 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         box.prop(props, "main_grid_spacing")
         box.prop(props, "sub_grid_spacing")
         box.prop(props, "perturbation_pct")
+        box.prop(props, "road_width")
 
         box = layout.box()
         box.label(text="Buildings", icon="OUTLINER_OB_MESH")
@@ -91,6 +92,7 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
 
         row = box.row()
         row.operator("cityp.fetch_osm", icon="URL")
+        row.operator("cityp.import_osm_file", icon="FILEBROWSER")
 
         raw = context.scene.cityp_osm_data_raw
         if raw:
@@ -120,3 +122,10 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         box.prop(props, "export_layered")
         row = box.row()
         row.operator("cityp.export", icon="FILE_TICK")
+
+        box = layout.box()
+        box.label(text="Presets", icon="PRESET")
+        row = box.row(align=True)
+        row.operator("cityp.save_preset", icon="ADD")
+        row.operator("cityp.load_preset", icon="IMPORT")
+        row.operator("cityp.delete_preset", icon="X")

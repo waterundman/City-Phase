@@ -39,7 +39,7 @@ TYPOLOGY_CONFIG = {
 }
 
 
-def batch_place_buildings(building_specs, seed, road_edges=None, context=None):
+def batch_place_buildings(building_specs, seed, road_edges=None, context=None, road_width=8.0):
     if context is None:
         context = bpy.context
 
@@ -134,7 +134,7 @@ def batch_place_buildings(building_specs, seed, road_edges=None, context=None):
         building_col.objects.link(obj)
 
     if road_edges:
-        _generate_road_mesh(road_edges, road_col)
+        _generate_road_mesh(road_edges, road_col, road_width=road_width)
 
     return building_col, road_col
 

@@ -32,7 +32,10 @@ def add_roof_details(building_obj, seed):
             top_z,
         ))
 
-        building_obj.users_collection[0].objects.link(item_obj)
+        if building_obj.users_collection:
+            building_obj.users_collection[0].objects.link(item_obj)
+        else:
+            bpy.context.collection.objects.link(item_obj)
 
 
 def _generate_roof_items(rng):

@@ -69,32 +69,53 @@ class CITYP_OT_FetchOSM(bpy.types.Operator):
             context.window_manager.event_timer_remove(self._timer)
 
     def _fetch_thread(self, query):
-        try:
-            self._status_message = "Connecting to Overpass API..."
-            self._progress = 0.1
+        import traceback
 
-            url = "https://overpass-api.de/api/interpreter"
-            data = urllib.parse.urlencode({"data": query}).encode("utf-8")
+        urls = [
+            "https://overpass-api.de/api/interpreter",
+            "https://overpass.kumi.systems/api/interpreter",
+        ]
 
-            req = urllib.request.Request(url, data=data, method="POST")
-            req.add_header("User-Agent", "CityPhase Blender Plugin/0.1")
+        for url in urls:
+            try:
+                self._status_message = f"Connecting to {url.split('/')[2]}..."
+                self._progress = 0.1
 
-            self._status_message = "Downloading..."
-            self._progress = 0.3
+                data = urllib.parse.urlencode({"data": query}).encode("utf-8")
+                req = urllib.request.Request(url, data=data, method="POST")
+                req.add_header("User-Agent", "CityPhase/0.6.0 (github.com/waterundman/City-Phase)")
 
-            with urllib.request.urlopen(req, timeout=120) as response:
-                raw = response.read()
-                self._progress = 0.9
-                self._status_message = "Parsing..."
+                self._status_message = "Downloading..."
+                self._progress = 0.3
 
-            self._result = json.loads(raw.decode("utf-8"))
-            self._progress = 1.0
-            self._status_message = "Done"
+                with urllib.request.urlopen(req, timeout=120) as response:
+                    if response.getcode() == 429:
+                        self._status_message = "Rate limited, trying fallback..."
+                        continue
+                    raw = response.read()
+                    self._progress = 0.9
+                    self._status_message = "Parsing..."
 
-        except Exception as e:
-            self._error = f"OSM fetch failed: {str(e)}"
-        finally:
-            self._done = True
+                self._result = json.loads(raw.decode("utf-8"))
+                self._progress = 1.0
+                self._status_message = "Done"
+                return
+
+            except urllib.error.HTTPError as e:
+                if e.code == 429:
+                    self._status_message = "Rate limited, trying fallback..."
+                    continue
+                self._error = f"HTTP {e.code}: {str(e)}"
+                traceback.print_exc()
+                return
+            except Exception as e:
+                self._error = f"OSM fetch failed: {str(e)}"
+                traceback.print_exc()
+                self._done = True
+                return
+
+        self._error = "All Overpass servers rate-limited or unreachable. Please try again later."
+        self._done = True
 
     def _build_query(self, props):
         if props.osm_source == "bbox":

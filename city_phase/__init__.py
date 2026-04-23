@@ -13,6 +13,8 @@ from .operators.op_generate import CITYP_OT_Generate
 from .operators.op_osm_fetch import CITYP_OT_FetchOSM
 from .operators.op_apply_pipeline import CITYP_OT_ApplyPipeline
 from .operators.op_export import CITYP_OT_Export
+from .operators.op_import_osm import CITYP_OT_ImportOSMFile
+from .operators.op_preset import CITYP_OT_SavePreset, CITYP_OT_LoadPreset, CITYP_OT_DeletePreset
 from .panels.panel_main import CITYP_PT_MainPanel
 
 classes = (
@@ -21,6 +23,10 @@ classes = (
     CITYP_OT_FetchOSM,
     CITYP_OT_ApplyPipeline,
     CITYP_OT_Export,
+    CITYP_OT_ImportOSMFile,
+    CITYP_OT_SavePreset,
+    CITYP_OT_LoadPreset,
+    CITYP_OT_DeletePreset,
     CITYP_PT_MainPanel,
 )
 

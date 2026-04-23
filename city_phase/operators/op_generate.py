@@ -49,7 +49,7 @@ class CITYP_OT_Generate(bpy.types.Operator):
             "tower_ratio": props.tower_ratio,
         }
 
-        obj = building_gen.generate_building(params)
+        obj = building_gen.generate_building(params, context=context)
 
         if obj is None:
             self.report({"ERROR"}, "Generation failed. Check console for details.")
@@ -109,6 +109,7 @@ class CITYP_OT_Generate(bpy.types.Operator):
             seed=seed,
             road_edges=road_edges,
             context=context,
+            road_width=props.road_width,
         )
 
         if props.add_roof_details:
@@ -239,5 +240,10 @@ class CITYP_OT_Generate(bpy.types.Operator):
         }
         base = type_heights.get(building_type, 15.0)
 
-        rng = random.Random(way["id"])
-        return base * (0.7 + 0.6 * rng.random())
+        way_id = way.get("id", 0)
+        try:
+            seed_val = int(way_id)
+        except (ValueError, TypeError):
+            seed_val = int(hashlib.md5(str(way_id).encode()).hexdigest(), 16)
+        rng = random.Random(seed_val)
+        return max(base * (0.7 + 0.6 * rng.random()), 3.0)
