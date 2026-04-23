@@ -6,9 +6,11 @@ from .style_prs import (
     BRUTALIST_PRS,
     ALL_STYLES,
     get_prs,
+    interpolate_prs,
 )
 from . import bauhaus_gen
 from . import constructivist_gen
 from . import minimalist_gen
 from . import postmodern_gen
 from . import brutalist_gen
+from . import mixed_gen

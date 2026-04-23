@@ -58,6 +58,18 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
             box.prop(props, "podium_height")
             box.prop(props, "tower_ratio")
 
+        elif props.typology in ("bauhaus", "constructivist", "minimalist", "postmodern", "brutalist"):
+            box = layout.box()
+            box.label(text="Style Parameters", icon="MOD_SOLIDIFY")
+            box.label(text=f"Using {props.typology.replace('_', ' ').title()} PRS", icon="INFO")
+
+        elif props.typology == "mixed":
+            box = layout.box()
+            box.label(text="Mixed Style", icon="MOD_BOOLEAN")
+            box.prop(props, "style_a")
+            box.prop(props, "style_b")
+            box.prop(props, "blend_ratio")
+
     def _draw_city(self, layout, props):
         box = layout.box()
         box.label(text="City Layout", icon="GRID")

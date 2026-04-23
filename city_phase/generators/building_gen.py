@@ -435,6 +435,12 @@ def generate_building(params, name="CityP_Building", context=None):
         if obj:
             apply_white_clay(obj)
         return obj
+    elif typology == "mixed":
+        from .styles import mixed_gen
+        obj = mixed_gen.generate(params, context=context)
+        if obj:
+            apply_white_clay(obj)
+        return obj
 
     # --- Legacy Generators (direct BMesh) ---
     mesh = bpy.data.meshes.new(name + "Mesh")

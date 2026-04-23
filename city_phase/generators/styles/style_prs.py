@@ -95,3 +95,54 @@ ALL_STYLES = {
 def get_prs(style_key):
     """Get the PRS for a given style key."""
     return ALL_STYLES.get(style_key, BAUHAUS_PRS)
+
+
+def interpolate_prs(style_a, style_b, ratio=0.5):
+    """Interpolate between two style PRS.
+
+    ratio=0.0 → pure style_a
+    ratio=1.0 → pure style_b
+    ratio=0.5 → equal blend
+    """
+    prs_a = get_prs(style_a)
+    prs_b = get_prs(style_b)
+
+    mixed = {}
+    all_keys = set(prs_a.keys()) | set(prs_b.keys())
+
+    for key in all_keys:
+        va = prs_a.get(key)
+        vb = prs_b.get(key)
+
+        if va is None:
+            mixed[key] = vb
+        elif vb is None:
+            mixed[key] = va
+        elif isinstance(va, (tuple, list)) and len(va) == 2 and isinstance(va[0], (int, float)):
+            # Numeric range: lerp min and max
+            mixed[key] = (
+                _lerp(va[0], vb[0], ratio),
+                _lerp(va[1], vb[1], ratio),
+            )
+        elif isinstance(va, (int, float)) and isinstance(vb, (int, float)):
+            mixed[key] = _lerp(va, vb, ratio)
+        elif isinstance(va, bool) and isinstance(vb, bool):
+            # Boolean: threshold at 0.5
+            mixed[key] = vb if ratio >= 0.5 else va
+        elif isinstance(va, str) and isinstance(vb, str):
+            # String: pick based on ratio
+            mixed[key] = vb if ratio >= 0.5 else va
+        elif isinstance(va, list) and isinstance(vb, list):
+            # List: blend by picking from both
+            n_a = max(1, int(len(va) * (1 - ratio)))
+            n_b = max(1, int(len(vb) * ratio))
+            mixed[key] = va[:n_a] + vb[:n_b]
+        else:
+            mixed[key] = vb if ratio >= 0.5 else va
+
+    mixed["style_name"] = f"Mixed({prs_a.get('style_name', '?')}+{prs_b.get('style_name', '?')})"
+    return mixed
+
+
+def _lerp(a, b, t):
+    return a * (1 - t) + b * t

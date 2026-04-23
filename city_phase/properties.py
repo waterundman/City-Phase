@@ -45,8 +45,45 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
             ("minimalist", "Minimalist / 极简主义", "Pure geometry, wall protagonist, light cutting"),
             ("postmodern", "Postmodern / 后现代", "Historical motifs, juxtaposition, playful scale"),
             ("brutalist", "Brutalist / 粗野主义", "Monumental scale, sculptural facade, raw concrete"),
+            ("mixed", "Mixed / 混合风格", "Blend two styles with adjustable ratio"),
         ],
         default="stepped_tower",
+    )
+
+    # --- Mixed Style ---
+    style_a: bpy.props.EnumProperty(
+        name="Style A",
+        description="First style to blend",
+        items=[
+            ("bauhaus", "Bauhaus", ""),
+            ("constructivist", "Constructivist", ""),
+            ("minimalist", "Minimalist", ""),
+            ("postmodern", "Postmodern", ""),
+            ("brutalist", "Brutalist", ""),
+        ],
+        default="bauhaus",
+    )
+
+    style_b: bpy.props.EnumProperty(
+        name="Style B",
+        description="Second style to blend",
+        items=[
+            ("bauhaus", "Bauhaus", ""),
+            ("constructivist", "Constructivist", ""),
+            ("minimalist", "Minimalist", ""),
+            ("postmodern", "Postmodern", ""),
+            ("brutalist", "Brutalist", ""),
+        ],
+        default="brutalist",
+    )
+
+    blend_ratio: bpy.props.FloatProperty(
+        name="Blend",
+        description="0.0 = pure Style A, 1.0 = pure Style B",
+        default=0.5,
+        min=0.0,
+        max=1.0,
+        step=10,
     )
 
     seed: bpy.props.IntProperty(
