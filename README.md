@@ -119,6 +119,8 @@
 | **v1.0.0** | **视觉增强：Grime + Bevel + 窗格发光 + 大气雾** |
 | v2.0.0 | 构成语法引擎：CompositionBuilder + 9 种谓词语法 |
 | **v2.0.5** | **5 种风格化单体生成器：包豪斯/构成主义/极简/后现代/粗野** |
+| v2.1.0 | 混合风格插值：任意两种风格可按比例融合 (interpolate_prs) |
+| **v2.2.0** | **自然语言设计意图：输入"轻盈透明"自动匹配风格并生成** |
 
 ---
 
@@ -234,3 +236,5 @@ From v1.0.0 to v2.0.0, CityPhase introduced the **Composition Engine**, explorin
 | **v1.0.0** | **Visual enhancement: grime, bevel, window emission, atmospheric fog** |
 | v2.0.0 | Composition Engine: CompositionBuilder + 9 predicate grammar |
 | **v2.0.5** | **5 style generators: Bauhaus / Constructivist / Minimalist / Postmodern / Brutalist** |
+| v2.1.0 | Mixed style interpolation: blend any two styles with adjustable ratio |
+| **v2.2.0** | **Natural language design intent: type "light and airy" to auto-match styles** |
