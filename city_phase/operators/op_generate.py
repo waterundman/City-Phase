@@ -35,6 +35,16 @@ class CITYP_OT_Generate(bpy.types.Operator):
             return self._generate_osm(props, context)
 
     def _generate_single(self, props, context):
+        # Auto-parse design intent if present
+        if props.design_intent.strip():
+            from ..utils.design_intent import parse_intent, apply_intent_to_props
+            result = parse_intent(props.design_intent)
+            apply_intent_to_props(props, result)
+            self.report(
+                {"INFO"},
+                f"Intent parsed: {result['primary']} × {result['secondary']} @ {result['blend']:.0%}"
+            )
+
         params = {
             "base_w": props.base_w,
             "base_d": props.base_d,
@@ -50,6 +60,9 @@ class CITYP_OT_Generate(bpy.types.Operator):
             "tower_ratio": props.tower_ratio,
             "roof_type": props.roof_type,
             "facade_detail": props.facade_detail,
+            "style_a": props.style_a,
+            "style_b": props.style_b,
+            "blend_ratio": props.blend_ratio,
         }
 
         obj = building_gen.generate_building(params, context=context)

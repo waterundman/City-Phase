@@ -18,6 +18,14 @@ class CITYP_PT_MainPanel(bpy.types.Panel):
         box.prop(props, "gen_mode")
         box.prop(props, "seed")
 
+        # Design Intent input (visible in all modes)
+        box = layout.box()
+        box.label(text="Design Intent", icon="OUTLINER_OB_FONT")
+        box.prop(props, "design_intent")
+        if props.design_intent:
+            row = box.row()
+            row.operator("cityp.parse_intent", icon="CHECKMARK", text="Parse Intent")
+
         if props.gen_mode == "single":
             self._draw_single(layout, props)
         elif props.gen_mode == "city":

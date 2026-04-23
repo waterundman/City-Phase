@@ -1,7 +1,7 @@
 bl_info = {
     "name": "城市相 CityPhase",
     "author": "CityPhase Team",
-    "version": (2, 1, 0),
+    "version": (2, 2, 0),
     "blender": (3, 6, 0),
     "category": "Add Mesh",
     "description": "Procedural city white model generator with render pipeline presets",
@@ -15,6 +15,7 @@ from .operators.op_apply_pipeline import CITYP_OT_ApplyPipeline
 from .operators.op_export import CITYP_OT_Export
 from .operators.op_import_osm import CITYP_OT_ImportOSMFile
 from .operators.op_preset import CITYP_OT_SavePreset, CITYP_OT_LoadPreset, CITYP_OT_DeletePreset
+from .operators.op_parse_intent import CITYP_OT_ParseIntent
 from .panels.panel_main import CITYP_PT_MainPanel
 
 classes = (
@@ -27,6 +28,7 @@ classes = (
     CITYP_OT_SavePreset,
     CITYP_OT_LoadPreset,
     CITYP_OT_DeletePreset,
+    CITYP_OT_ParseIntent,
     CITYP_PT_MainPanel,
 )
 

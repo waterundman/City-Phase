@@ -86,6 +86,14 @@ class CityPhaseSettings(bpy.types.PropertyGroup):
         step=10,
     )
 
+    # --- Design Intent ---
+    design_intent: bpy.props.StringProperty(
+        name="Design Intent",
+        description="Describe the feeling you want (e.g. 'light and transparent' or 'heavy monumental')",
+        default="",
+        maxlen=256,
+    )
+
     seed: bpy.props.IntProperty(
         name="Seed",
         description="Random seed for reproducible generation",
